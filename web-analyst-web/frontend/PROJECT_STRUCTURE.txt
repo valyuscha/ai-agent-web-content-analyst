@@ -1,0 +1,85 @@
+web-analyst-web/frontend/
+│
+├── app/                                    # Next.js App Router (Application Entry)
+│   ├── page.tsx                            # Main workspace page
+│   ├── layout.tsx                          # Root layout with providers
+│   ├── providers.tsx                       # Context providers wrapper
+│   └── globals.css                         # Global styles
+│
+├── src/                                    # Source Code (NEW ARCHITECTURE)
+│   │
+│   ├── core/                               # CORE LAYER
+│   │   │
+│   │   ├── domain/                         # Domain Models & Business Rules
+│   │   │   ├── Space.ts                    # Space entity, SpaceState, SpaceAction
+│   │   │   ├── Source.ts                   # Source entity
+│   │   │   └── spaceFactory.ts             # Factory: createDefaultSpace, deepCloneSpace
+│   │   │
+│   │   ├── application/                    # Application Services (empty - future)
+│   │   │
+│   │   └── infrastructure/                 # External Integrations
+│   │       ├── apiClient.ts                # Backend HTTP client
+│   │       ├── spaceStorage.ts             # localStorage adapter
+│   │       └── spaceMigration.ts           # Data migration logic
+│   │
+│   ├── features/                           # FEATURES LAYER (by domain)
+│   │   │
+│   │   ├── spaces/                         # Space Management Feature
+│   │   │   ├── ui/
+│   │   │   │   └── SpaceSelector.tsx       # Space dropdown & management UI
+│   │   │   ├── application/
+│   │   │   │   └── SpaceContext.tsx        # State management (Context + Reducer)
+│   │   │   ├── domain/                     # (empty - types in core/domain)
+│   │   │   └── infrastructure/             # (empty - logic in core/infrastructure)
+│   │   │
+│   │   ├── analysis/                       # Analysis Workflow Feature
+│   │   │   └── ui/
+│   │   │       ├── UrlInputForm.tsx        # URL input & configuration
+│   │   │       ├── ResultsView.tsx         # Analysis results display
+│   │   │       └── ActionItemsTable.tsx    # Action items table
+│   │   │
+│   │   ├── sources/                        # Source Management Feature
+│   │   │   └── ui/
+│   │   │       └── SourcePreview.tsx       # Source preview & editing
+│   │   │
+│   │   ├── logs/                           # Agent Logging Feature
+│   │   │   └── ui/
+│   │   │       └── AgentLog.tsx            # Agent log viewer
+│   │   │
+│   │   └── evaluation/                     # Evaluation Feature
+│   │       └── ui/
+│   │           ├── EvaluationPanel.tsx     # Evaluation metrics & controls
+│   │           └── DownloadButtons.tsx     # Export buttons
+│   │
+│   └── shared/                             # SHARED LAYER (cross-cutting)
+│       ├── types/
+│       │   └── api.ts                      # API request/response types
+│       └── utils/                          # (empty - future utilities)
+│
+├── public/                                 # Static Assets
+├── package.json                            # Dependencies
+├── tsconfig.json                           # TypeScript config (with path aliases)
+├── next.config.js                          # Next.js config
+├── tailwind.config.ts                      # Tailwind config
+└── REFACTORING_SUMMARY.md                  # This refactoring documentation
+
+LAYER DEPENDENCY FLOW:
+======================
+app/ (Next.js)
+  ↓
+features/ (UI + Application)
+  ↓
+core/domain (Business Logic)
+  ↓
+core/infrastructure (External Services)
+  ↓
+shared/ (Utilities)
+
+KEY PRINCIPLES:
+===============
+1. Domain layer is pure (no framework dependencies)
+2. Infrastructure implements interfaces from domain
+3. Features are organized by business capability
+4. UI components are presentational
+5. Application layer orchestrates workflows
+6. Shared layer has no dependencies on other layers
