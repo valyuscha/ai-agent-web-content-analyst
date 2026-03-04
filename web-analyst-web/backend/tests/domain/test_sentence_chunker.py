@@ -3,6 +3,7 @@ Comprehensive unit tests for sentence-aware chunking.
 Addresses mentor feedback: "Consider adding more comprehensive unit tests beyond import validation"
 """
 import pytest
+import re
 from src.domain.chunking.sentence_chunker import (
     split_into_sentences,
     chunk_text,
@@ -140,6 +141,63 @@ class TestChunkingEdgeCases:
         chunks = chunk_text(text, "source-1")
         assert len(chunks) == 1
         assert "🎉" in chunks[0].text
+    
+    def test_multiple_punctuation(self):
+        text = "Really?! Yes!! Absolutely."
+        chunks = chunk_text(text, "source-1")
+        assert len(chunks) >= 1
+        assert all(chunk.text.strip() for chunk in chunks)
+    
+    def test_only_whitespace_between_sentences(self):
+        text = "First.    Second.     Third."
+        chunks = chunk_text(text, "source-1")
+        assert len(chunks) >= 1
+        # Should not have excessive whitespace
+        for chunk in chunks:
+            assert not re.search(r'\s{3,}', chunk.text)
+    
+    def test_mixed_newlines_and_spaces(self):
+        text = "First sentence.\n\nSecond sentence.\n   Third sentence."
+        chunks = chunk_text(text, "source-1")
+        assert len(chunks) >= 1
+        assert all(chunk.text.strip() for chunk in chunks)
+    
+    def test_very_short_sentences(self):
+        text = "Hi. Ok. Yes. No. Maybe."
+        chunks = chunk_text(text, "source-1", max_chars=20)
+        assert len(chunks) >= 1
+        for chunk in chunks:
+            assert chunk.text.strip()
+    
+    def test_sentence_with_quotes(self):
+        text = 'He said "Hello world." She replied "Hi there."'
+        chunks = chunk_text(text, "source-1")
+        assert len(chunks) >= 1
+        assert '"' in chunks[0].text
+    
+    def test_urls_in_text(self):
+        text = "Visit https://example.com for more. It has great content."
+        chunks = chunk_text(text, "source-1")
+        assert len(chunks) >= 1
+        assert "https://example.com" in chunks[0].text or "https://example.com" in chunks[1].text if len(chunks) > 1 else True
+    
+    def test_numbers_and_decimals(self):
+        text = "The value is 3.14159. Another number is 2.71828."
+        chunks = chunk_text(text, "source-1")
+        assert len(chunks) >= 1
+        # Should not split on decimal points
+        assert "3.14159" in ' '.join(c.text for c in chunks)
+    
+    def test_ellipsis(self):
+        text = "Wait... There's more... Keep reading."
+        chunks = chunk_text(text, "source-1")
+        assert len(chunks) >= 1
+    
+    def test_all_caps_text(self):
+        text = "THIS IS IMPORTANT. PLEASE READ CAREFULLY. THANK YOU."
+        chunks = chunk_text(text, "source-1")
+        assert len(chunks) >= 1
+        assert all(chunk.text.strip() for chunk in chunks)
 
 
 class TestChunkingIntegration:

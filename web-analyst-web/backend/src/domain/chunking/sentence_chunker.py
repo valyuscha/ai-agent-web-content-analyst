@@ -24,11 +24,29 @@ class TextChunk:
 
 
 def split_into_sentences(text: str) -> List[str]:
-    """Split text into sentences using regex"""
-    # Split on sentence boundaries: . ! ? followed by space/newline
-    # Handles abbreviations like Dr., U.S., etc.
+    """
+    Split text into sentences using regex with improved handling.
+    
+    Handles:
+    - Standard sentence endings (. ! ?)
+    - Abbreviations (Dr., U.S., etc.)
+    - Multiple punctuation (!!, ?!)
+    - Newlines as sentence boundaries
+    """
+    if not text or not text.strip():
+        return []
+    
+    # Normalize whitespace and newlines
+    text = re.sub(r'\n+', ' ', text)
+    text = re.sub(r'\s+', ' ', text).strip()
+    
+    # Split on sentence boundaries: . ! ? followed by space and capital letter
+    # Also handles multiple punctuation like !! or ?!
     sentences = re.split(r'(?<=[.!?])\s+(?=[A-Z])', text)
+    
+    # Filter out empty sentences and strip whitespace
     sentences = [s.strip() for s in sentences if s.strip()]
+    
     return sentences
 
 

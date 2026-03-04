@@ -45,7 +45,7 @@ class WebAnalystAgent:
         tone: str,
         language: str
     ) -> SourceResult:
-        """Extract structured insights from a single source"""
+        """Extract structured insights from a single source with attribution"""
         
         plan = self.plan(analysis_mode)
         
