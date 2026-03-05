@@ -1,0 +1,25 @@
+version: "1"
+services:
+  - name: web-analyst-backend
+    type: web
+    env: python
+    buildCommand: pip install -r web-analyst-web/backend/requirements.txt
+    runCommand: cd web-analyst-web/backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    ports:
+      - port: 8000
+        protocol: http
+    env_vars:
+      - key: OPENAI_API_KEY
+        value: ${OPENAI_API_KEY}
+    
+  - name: web-analyst-frontend
+    type: web
+    env: nodejs
+    buildCommand: cd web-analyst-web/frontend && npm install && npm run build
+    runCommand: cd web-analyst-web/frontend && npm start
+    ports:
+      - port: 3000
+        protocol: http
+    env_vars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://web-analyst-backend-${KOYEB_APP_NAME}.koyeb.app
