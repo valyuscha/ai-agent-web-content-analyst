@@ -1,19 +1,19 @@
-/**
- * Error display component
- */
-'use client';
+import { ErrorDisplayProps } from './ErrorDisplay.types';
 
-interface ErrorDisplayProps {
-  error: string | null;
-}
-
-export default function ErrorDisplay({ error }: ErrorDisplayProps) {
-  if (!error) return null;
-
+export default function ErrorDisplay({ error, onDismiss }: ErrorDisplayProps) {
   return (
     <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-      <p className="text-red-800 font-medium">Error:</p>
-      <p className="text-red-700 text-sm mt-1">{error}</p>
+      <div className="flex items-start justify-between">
+        <p className="text-red-800">❌ {error}</p>
+        {onDismiss && (
+          <button
+            onClick={onDismiss}
+            className="text-red-600 hover:text-red-800 ml-4"
+          >
+            ✕
+          </button>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,14 +1,10 @@
-/**
- * Custom hook for managing space input state
- */
+import { useCallback } from 'react';
 import { useSpaces } from '../../features/spaces/application/SpaceContext';
 
 export function useSpaceInput() {
   const { activeSpace, updateActiveSpace } = useSpaces();
 
-  const handleInputChange = (urls: string[], text: string, mode: string, tone: string) => {
-    if (!activeSpace) return;
-    
+  const updateInput = useCallback((urls: string[], text: string, mode: string, tone: string) => {
     updateActiveSpace({
       input: {
         urls,
@@ -17,7 +13,17 @@ export function useSpaceInput() {
         tone,
       },
     });
-  };
+  }, [updateActiveSpace]);
 
-  return { handleInputChange };
+  const updateTab = useCallback((tab: string) => {
+    if (!activeSpace) return;
+    updateActiveSpace({
+      ui: {
+        ...activeSpace.ui,
+        activeTab: tab as any,
+      },
+    });
+  }, [activeSpace, updateActiveSpace]);
+
+  return { updateInput, updateTab };
 }

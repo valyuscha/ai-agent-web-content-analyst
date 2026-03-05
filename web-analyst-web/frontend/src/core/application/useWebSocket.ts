@@ -1,38 +1,57 @@
-/**
- * Hook for WebSocket connection management
- */
-import { useSpaces } from '../../features/spaces/application/SpaceContext';
+import { useCallback, useRef } from 'react';
+
+interface WebSocketMessage {
+  type: string;
+  message?: string;
+  detail?: any;
+}
+
+interface UseWebSocketOptions {
+  onMessage: (data: WebSocketMessage) => void;
+  onError?: (error: Event) => void;
+  onClose?: () => void;
+}
 
 export function useWebSocket() {
-  const { dispatch } = useSpaces();
+  const wsRef = useRef<WebSocket | null>(null);
 
-  const connectWebSocket = async (sessionId: string, initiatingSpaceId: string): Promise<WebSocket> => {
-    const ws = new WebSocket(`ws://localhost:8000/ws/${sessionId}`);
-    
-    await new Promise<void>((resolve, reject) => {
-      ws.onopen = () => resolve();
-      ws.onerror = (error) => reject(error);
+  const connect = useCallback((sessionId: string, options: UseWebSocketOptions) => {
+    return new Promise<WebSocket>((resolve, reject) => {
+      const ws = new WebSocket(`ws://localhost:8000/ws/${sessionId}`);
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        console.log('WebSocket connected');
+        resolve(ws);
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        options.onMessage(data);
+      };
+
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        options.onError?.(error);
+        reject(error);
+      };
+
+      ws.onclose = () => {
+        console.log('WebSocket closed');
+        options.onClose?.();
+        wsRef.current = null;
+      };
+
       setTimeout(() => reject(new Error('WebSocket connection timeout')), 5000);
     });
+  }, []);
 
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'log') {
-        const logEntry = data.detail 
-          ? { message: data.message, detail: data.detail } 
-          : data.message;
-        
-        dispatch({
-          type: 'APPEND_LOG',
-          payload: { id: initiatingSpaceId, entry: logEntry },
-        });
-      }
-    };
+  const disconnect = useCallback(() => {
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+    }
+  }, []);
 
-    ws.onclose = () => console.log('WebSocket closed');
-
-    return ws;
-  };
-
-  return { connectWebSocket };
+  return { connect, disconnect };
 }

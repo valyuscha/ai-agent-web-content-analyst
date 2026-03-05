@@ -82,18 +82,12 @@ export default function SpaceSelector() {
 
       {isOpen && (
         <div className="absolute top-full left-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-          <div className="p-2 border-b border-gray-200 flex gap-2">
+          <div className="p-2 border-b border-gray-200">
             <button
               onClick={handleCreateSpace}
-              className="flex-1 px-3 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              className="w-full px-3 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
             >
               + New Space
-            </button>
-            <button
-              onClick={handleDuplicateSpace}
-              className="flex-1 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
-            >
-              📋 Duplicate
             </button>
           </div>
 

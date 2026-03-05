@@ -1,26 +1,21 @@
-/**
- * Health status banner component
- */
-'use client';
+import { HealthStatusProps } from './HealthStatus.types';
 
-interface HealthStatusProps {
-  openaiConfigured: boolean | null;
-  checkingHealth: boolean;
-}
-
-export default function HealthStatus({ openaiConfigured, checkingHealth }: HealthStatusProps) {
-  if (checkingHealth) return null;
-
-  if (openaiConfigured === false) {
+export default function HealthStatus({ checking, configured }: HealthStatusProps) {
+  if (checking) {
     return (
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-        <p className="text-yellow-800 font-medium">⚠️ Backend Configuration Issue</p>
-        <p className="text-yellow-700 text-sm mt-1">
-          OpenAI API key not configured. Please set OPENAI_API_KEY in backend/.env
-        </p>
+      <div className="px-4 py-2 rounded-lg bg-blue-100 text-blue-800">
+        <span className="animate-pulse">⏳ Checking Server...</span>
       </div>
     );
   }
 
-  return null;
+  if (configured === null) return null;
+
+  return (
+    <div className={`px-4 py-2 rounded-lg ${
+      configured ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+    }`}>
+      {configured ? '✓ OpenAI Configured' : '✗ OpenAI Not Configured'}
+    </div>
+  );
 }

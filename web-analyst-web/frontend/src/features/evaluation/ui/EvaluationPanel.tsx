@@ -41,7 +41,7 @@ export default function EvaluationPanel({ resultJson, onEvaluate, evaluationResu
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-2xl font-bold mb-4">Evaluation</h2>
+      <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">Evaluation</h2>
 
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2">Evaluation Method</label>

@@ -1,19 +1,32 @@
-/**
- * Application layer hooks - orchestrate business logic
- */
+import { useHealthCheck } from './useHealthCheck';
+import { useIngest } from './useIngest';
+import { useUpdateSource } from './useUpdateSource';
+import { useRunAnalysis } from './useRunAnalysis';
+import { useWebSocket } from './useWebSocket';
+import { useSpaceInput } from './useSpaceInput';
 
-// Health check
-export { useHealthCheck } from './useHealthCheck';
+export function useAnalysisWorkflow() {
+  const health = useHealthCheck();
+  const { ingest } = useIngest();
+  const { updateSource } = useUpdateSource();
+  const { run } = useRunAnalysis();
+  const { updateInput, updateTab } = useSpaceInput();
 
-// Space input management
-export { useSpaceInput } from './useSpaceInput';
+  return {
+    health,
+    ingest,
+    updateSource,
+    run,
+    updateInput,
+    updateTab,
+  };
+}
 
-// Analysis workflows (individual hooks)
-export { useIngest } from './useIngest';
-export { useUpdateSource } from './useUpdateSource';
-export { useRunAnalysis } from './useRunAnalysis';
-export { useReflect } from './useReflect';
-export { useWebSocket } from './useWebSocket';
-
-// Facade hook (backward compatibility)
-export { useAnalysisWorkflow } from './useAnalysisWorkflow';
+export {
+  useHealthCheck,
+  useIngest,
+  useUpdateSource,
+  useRunAnalysis,
+  useWebSocket,
+  useSpaceInput,
+};

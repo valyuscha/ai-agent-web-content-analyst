@@ -21,7 +21,7 @@ export default function SourcePreview({ sources, onUpdateSource }: SourcePreview
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-2xl font-bold mb-4">Sources Preview</h2>
+      <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">Sources Preview</h2>
       
       {sources.length === 0 ? (
         <p className="text-gray-500">No sources loaded yet.</p>

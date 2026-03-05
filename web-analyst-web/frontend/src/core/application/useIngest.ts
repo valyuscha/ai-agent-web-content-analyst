@@ -1,23 +1,15 @@
-/**
- * Hook for ingesting sources (URLs or pasted text)
- */
+import { useCallback } from 'react';
 import { apiClient } from '../infrastructure/apiClient';
 import { useSpaces } from '../../features/spaces/application/SpaceContext';
 
 export function useIngest() {
-  const { activeSpace, captureInitiatingSpaceId, dispatch } = useSpaces();
+  const { activeSpace, captureInitiatingSpaceId, dispatch, updateActiveSpace } = useSpaces();
 
-  const ingest = async (urls: string[], mode: string, tone: string) => {
+  const ingest = useCallback(async (urls: string[], mode: string, tone: string) => {
     const initiatingSpaceId = captureInitiatingSpaceId();
     if (!initiatingSpaceId || !activeSpace) return;
 
-    dispatch({
-      type: 'UPDATE_SPACE',
-      payload: {
-        id: initiatingSpaceId,
-        updates: { loading: true, error: null },
-      },
-    });
+    updateActiveSpace({ loading: true, error: null });
     
     try {
       const response = await apiClient.ingest({
@@ -56,7 +48,7 @@ export function useIngest() {
         },
       });
     }
-  };
+  }, [activeSpace, captureInitiatingSpaceId, dispatch, updateActiveSpace]);
 
   return { ingest };
 }

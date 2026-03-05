@@ -1,13 +1,11 @@
-/**
- * Hook for updating source content (manual text input)
- */
+import { useCallback } from 'react';
 import { apiClient } from '../infrastructure/apiClient';
 import { useSpaces } from '../../features/spaces/application/SpaceContext';
 
 export function useUpdateSource() {
   const { activeSpace, updateActiveSpace } = useSpaces();
 
-  const updateSource = async (url: string, text: string) => {
+  const updateSource = useCallback(async (url: string, text: string) => {
     if (!activeSpace?.results.sessionId) return;
     
     updateActiveSpace({ loading: true });
@@ -27,7 +25,7 @@ export function useUpdateSource() {
     } catch (err: any) {
       updateActiveSpace({ error: err.message, loading: false });
     }
-  };
+  }, [activeSpace, updateActiveSpace]);
 
   return { updateSource };
 }

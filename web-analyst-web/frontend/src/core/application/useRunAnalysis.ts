@@ -1,15 +1,13 @@
-/**
- * Hook for running analysis with WebSocket logging
- */
+import { useCallback } from 'react';
 import { apiClient } from '../infrastructure/apiClient';
 import { useSpaces } from '../../features/spaces/application/SpaceContext';
 import { useWebSocket } from './useWebSocket';
 
 export function useRunAnalysis() {
-  const { activeSpace, updateActiveSpace, captureInitiatingSpaceId, dispatch } = useSpaces();
-  const { connectWebSocket } = useWebSocket();
+  const { activeSpace, captureInitiatingSpaceId, dispatch, updateActiveSpace } = useSpaces();
+  const { connect, disconnect } = useWebSocket();
 
-  const runAnalysis = async () => {
+  const run = useCallback(async () => {
     if (!activeSpace?.results.sessionId) return;
     
     const initiatingSpaceId = captureInitiatingSpaceId();
@@ -22,18 +20,33 @@ export function useRunAnalysis() {
       log: { entries: [] },
     });
     
-    let ws: WebSocket | null = null;
-    
     try {
-      ws = await connectWebSocket(activeSpace.results.sessionId, initiatingSpaceId);
-    } catch (err: any) {
-      updateActiveSpace({ error: err.message, loading: false });
-      return;
-    }
-    
-    try {
+      const ws = await connect(activeSpace.results.sessionId, {
+        onMessage: (data) => {
+          if (data.type === 'log') {
+            const logEntry = data.detail 
+              ? { message: data.message || '', detail: data.detail } 
+              : data.message || '';
+            
+            dispatch({
+              type: 'APPEND_LOG',
+              payload: {
+                id: initiatingSpaceId,
+                entry: logEntry,
+              },
+            });
+          }
+        },
+        onError: (error) => {
+          updateActiveSpace({ 
+            error: 'WebSocket connection failed', 
+            loading: false 
+          });
+        },
+      });
+
       const response = await apiClient.run(activeSpace.results.sessionId);
-      ws.close();
+      disconnect();
       
       dispatch({
         type: 'UPDATE_SPACE',
@@ -51,13 +64,15 @@ export function useRunAnalysis() {
               ...activeSpace.email,
               body: response.email_draft,
             },
-            log: { entries: response.agent_log },
+            log: {
+              entries: response.agent_log,
+            },
             loading: false,
           },
         },
       });
     } catch (err: any) {
-      ws?.close();
+      disconnect();
       dispatch({
         type: 'UPDATE_SPACE',
         payload: {
@@ -66,7 +81,7 @@ export function useRunAnalysis() {
         },
       });
     }
-  };
+  }, [activeSpace, captureInitiatingSpaceId, dispatch, updateActiveSpace, connect, disconnect]);
 
-  return { runAnalysis };
+  return { run };
 }
