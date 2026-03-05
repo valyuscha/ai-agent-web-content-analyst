@@ -4,9 +4,12 @@ services:
     env: python
     plan: free
     rootDir: web-analyst-web/backend
-    buildCommand: pip install -r requirements.txt
+    runtime: python
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
       - key: OPENAI_API_KEY
         sync: false
 
