@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "start:all": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "cd web-analyst-web/backend && . venv/bin/activate && uvicorn main:app --host 0.0.0.0 --port 8000 --reload",
+    "start:frontend": "cd web-analyst-web/frontend && npm run dev"
   },
   "dependencies": {
     "next": "16.1.6",
@@ -18,6 +21,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
