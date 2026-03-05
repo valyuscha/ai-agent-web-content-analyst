@@ -10,13 +10,13 @@ import { useReflect } from './useReflect';
 export function useAnalysisWorkflow() {
   const { ingest } = useIngest();
   const { updateSource } = useUpdateSource();
-  const { runAnalysis } = useRunAnalysis();
+  const { run } = useRunAnalysis();
   const { reflect } = useReflect();
 
   return {
     handleIngest: ingest,
     handleUpdateSource: updateSource,
-    handleRun: runAnalysis,
+    handleRun: run,
     handleReflect: reflect,
   };
 }
