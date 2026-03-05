@@ -9,6 +9,7 @@ import {
 } from '../../shared/types/api';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const WS_BASE_URL = API_BASE_URL.replace(/^http/, 'ws');
 
 export const apiClient = {
   async health(): Promise<HealthResponse> {
@@ -77,6 +78,10 @@ export const apiClient = {
 
   getExportUrl(sessionId: string, format: 'md' | 'json'): string {
     return `${API_BASE_URL}/api/export?session_id=${sessionId}&format=${format}`;
+  },
+
+  getWebSocketUrl(sessionId: string): string {
+    return `${WS_BASE_URL}/ws/${sessionId}`;
   },
 
   async getSessionLog(sessionId: string): Promise<{ agent_log: string[] }> {

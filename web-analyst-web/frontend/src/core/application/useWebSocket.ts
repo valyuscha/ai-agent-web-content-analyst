@@ -1,4 +1,5 @@
 import { useCallback, useRef } from 'react';
+import { apiClient } from '../infrastructure/apiClient';
 
 interface WebSocketMessage {
   type: string;
@@ -17,7 +18,7 @@ export function useWebSocket() {
 
   const connect = useCallback((sessionId: string, options: UseWebSocketOptions) => {
     return new Promise<WebSocket>((resolve, reject) => {
-      const ws = new WebSocket(`ws://localhost:8000/ws/${sessionId}`);
+      const ws = new WebSocket(apiClient.getWebSocketUrl(sessionId));
       wsRef.current = ws;
 
       ws.onopen = () => {
