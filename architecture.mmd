@@ -1,0 +1,110 @@
+graph TB
+    subgraph "User Interfaces"
+        UI1[Streamlit App<br/>web-analyst-agent/app.py]
+        UI2[Next.js Frontend<br/>web-analyst-web/frontend]
+    end
+
+    subgraph "API Layer"
+        API[FastAPI Backend<br/>web-analyst-web/backend/main.py]
+        WS[WebSocket Manager<br/>Real-time Logs]
+    end
+
+    subgraph "Agent Core - Clean Architecture"
+        subgraph "Application Layer"
+            ORCH[AnalysisOrchestrator<br/>application/services.py]
+            INGEST[ContentIngestionService]
+            VSBUILDER[VectorStoreBuilder]
+            EMAIL[EmailDraftService]
+            LOG[AgentLog]
+        end
+
+        subgraph "Domain Layer"
+            PLANNER[AnalysisPlanner<br/>core/domain.py]
+            EXTRACTOR[InsightExtractor]
+            REFLECTOR[QualityReflector]
+            COMBINER[SourceCombiner]
+        end
+
+        subgraph "Infrastructure Layer"
+            LLM[OpenAILLM<br/>infrastructure/llm.py]
+            EMB[OpenAIEmbedding]
+            VS[FAISSVectorStore<br/>infrastructure/vector_store.py]
+            EXTRACT[ContentExtractorFactory<br/>infrastructure/extractors.py]
+        end
+    end
+
+    subgraph "External Services"
+        OPENAI[OpenAI API<br/>GPT-4o-mini]
+        WEB[Web Scraping<br/>BeautifulSoup4]
+    end
+
+    subgraph "Data Flow"
+        INPUT[User Input<br/>URLs + Config]
+        SOURCES[Source Content<br/>SourceContent]
+        CHUNKS[Text Chunks<br/>Embeddings]
+        CONTEXTS[Retrieved Contexts<br/>RAG]
+        INSIGHTS[Extracted Insights<br/>SourceResult]
+        COMBINED[Combined Result<br/>ExtractionResult]
+        REFLECTED[Reflected Output<br/>Quality Score]
+    end
+
+    %% User Interface Connections
+    UI1 --> ORCH
+    UI2 --> API
+    API --> ORCH
+    API --> WS
+    WS -.->|Stream Logs| UI2
+
+    %% Application Flow
+    INPUT --> INGEST
+    INGEST --> EXTRACT
+    EXTRACT --> WEB
+    INGEST --> SOURCES
+
+    SOURCES --> VSBUILDER
+    VSBUILDER --> VS
+    VS --> EMB
+    EMB --> OPENAI
+
+    SOURCES --> ORCH
+    ORCH --> PLANNER
+    ORCH --> LOG
+
+    %% Analysis Pipeline
+    PLANNER --> EXTRACTOR
+    EXTRACTOR --> VS
+    VS --> CONTEXTS
+    CONTEXTS --> EXTRACTOR
+    EXTRACTOR --> LLM
+    LLM --> OPENAI
+    EXTRACTOR --> INSIGHTS
+
+    %% Combination & Reflection
+    INSIGHTS --> COMBINER
+    COMBINER --> LLM
+    COMBINER --> COMBINED
+
+    COMBINED --> REFLECTOR
+    REFLECTOR --> LLM
+    REFLECTOR --> REFLECTED
+
+    %% Email Generation
+    REFLECTED --> EMAIL
+    EMAIL --> LLM
+
+    %% Styling
+    classDef ui fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    classDef api fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef app fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef domain fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    classDef infra fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef external fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    classDef data fill:#e0f2f1,stroke:#004d40,stroke-width:2px
+
+    class UI1,UI2 ui
+    class API,WS api
+    class ORCH,INGEST,VSBUILDER,EMAIL,LOG app
+    class PLANNER,EXTRACTOR,REFLECTOR,COMBINER domain
+    class LLM,EMB,VS,EXTRACT infra
+    class OPENAI,WEB external
+    class INPUT,SOURCES,CHUNKS,CONTEXTS,INSIGHTS,COMBINED,REFLECTED data
