@@ -5,8 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.backend.prod
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     restart: unless-stopped
@@ -15,10 +15,26 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend.prod
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_API_URL=${PUBLIC_URL:-http://localhost}
     depends_on:
       - backend
     restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
