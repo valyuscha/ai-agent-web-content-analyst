@@ -9,6 +9,7 @@ numpy==1.26.4
 requests==2.31.0
 beautifulsoup4==4.12.3
 lxml[html_clean]
+lxml_html_clean
 readability-lxml==0.8.1
 youtube-transcript-api==0.6.2
 tiktoken==0.5.2
