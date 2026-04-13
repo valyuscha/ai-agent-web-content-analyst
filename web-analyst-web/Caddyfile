@@ -1,4 +1,4 @@
-:80 {
+178-104-87-224.nip.io {
     handle /api/* {
         reverse_proxy backend:8000
     }
