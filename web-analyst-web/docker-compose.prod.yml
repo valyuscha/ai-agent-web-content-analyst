@@ -13,10 +13,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend.prod
+      args:
+        - NEXT_PUBLIC_API_URL=${PUBLIC_URL:-http://localhost}
     expose:
       - "3000"
-    environment:
-      - NEXT_PUBLIC_API_URL=${PUBLIC_URL:-http://localhost}
     depends_on:
       - backend
     restart: unless-stopped
