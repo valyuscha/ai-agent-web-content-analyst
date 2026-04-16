@@ -25,21 +25,21 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div>
-                <h1 className="text-3xl font-bold"><span>🤖 </span><span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Web Content Analyst</span></h1>
-                <p className="text-gray-600 text-sm">AI-powered content analysis with RAG and self-reflection</p>
-              </div>
-              <SpaceSelector />
+        <div className="max-w-7xl mx-auto px-3 py-3 sm:px-4 sm:py-4">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 sm:justify-between">
+            <div className="text-center sm:text-left w-full sm:w-auto">
+              <h1 className="text-2xl sm:text-3xl font-bold whitespace-nowrap"><span>🤖 </span><span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Web Content Analyst</span></h1>
+              <p className="text-gray-600 text-sm">AI-powered content analysis with RAG and self-reflection</p>
             </div>
-            <HealthStatus checking={health.checking} configured={health.openaiConfigured} />
+            <div className="flex items-center justify-center gap-2 w-full sm:w-auto">
+              <SpaceSelector />
+              <HealthStatus checking={health.checking} configured={health.openaiConfigured} />
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="max-w-7xl mx-auto px-3 py-4 sm:px-4 sm:py-6">
         {!health.checking && health.openaiConfigured === false && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <p className="text-red-800 font-semibold">⚠️ Server Configuration Required</p>

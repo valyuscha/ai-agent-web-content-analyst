@@ -13,7 +13,7 @@ export default function ResultsView({ reportMarkdown, resultJson }: ResultsViewP
 
   return (
     <>      
-      <div className="max-w-none mb-8 bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
+      <div className="max-w-none mb-8 bg-gradient-to-br from-blue-50 to-indigo-50 p-3 sm:p-4 rounded-lg border border-blue-100">
         <ReactMarkdown
           components={{
             h1: ({node, ...props}) => <h1 className="text-3xl font-bold text-gray-900 mb-4 pb-2 border-b-2 border-blue-300" {...props} />,
@@ -51,7 +51,7 @@ export default function ResultsView({ reportMarkdown, resultJson }: ResultsViewP
                 </div>
 
                 {expandedSource === index && (
-                  <div className="p-6 bg-gray-50 space-y-5">
+                  <div className="p-4 sm:p-6 bg-gray-50 space-y-4 sm:space-y-5">
                     <div className="bg-white p-4 rounded-lg border-l-4 border-blue-500">
                       <p className="font-semibold text-sm text-blue-700 mb-2">Summary</p>
                       <div className="text-sm text-gray-700 prose prose-sm max-w-none">

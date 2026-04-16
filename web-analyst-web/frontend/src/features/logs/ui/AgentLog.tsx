@@ -75,9 +75,9 @@ export default function AgentLog({ logs, loading }: AgentLogProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 flex flex-col" style={{ height: 'calc(100vh - 16rem)' }}>
+    <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 flex flex-col" style={{ minHeight: '50vh', height: 'calc(100vh - 16rem)' }}>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Agent Progress</h2>
+        <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent whitespace-nowrap">Agent Progress</h2>
         {loading && (
           <div className="flex items-center gap-2 text-blue-600">
             <div className="flex gap-1">
@@ -106,7 +106,7 @@ export default function AgentLog({ logs, loading }: AgentLogProps) {
             return (
               <div key={index} className={`rounded-lg ${formatted.bgClass} border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 animate-fadeIn`}>
                 <div 
-                  className={`flex items-center gap-3 p-4 ${hasDetail ? 'cursor-pointer hover:bg-opacity-80' : ''}`}
+                  className={`flex items-center gap-2 sm:gap-3 p-3 sm:p-4 ${hasDetail ? 'cursor-pointer hover:bg-opacity-80' : ''}`}
                   onClick={() => hasDetail && setExpandedIndex(isExpanded ? null : index)}
                 >
                   <span className="text-2xl flex-shrink-0">{formatted.icon}</span>

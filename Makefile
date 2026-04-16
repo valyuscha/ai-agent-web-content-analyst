@@ -11,6 +11,7 @@ install:
 
 start:
 	@echo "🚀 Starting all services..."
+	@fuser -k 8000/tcp 2>/dev/null; fuser -k 3000/tcp 2>/dev/null; sleep 0.5
 	@trap 'kill 0' EXIT; \
 	cd web-analyst-web/backend && . venv/bin/activate && uvicorn main:app --host 0.0.0.0 --port 8000 --reload & \
 	cd web-analyst-web/frontend && npm run dev & \

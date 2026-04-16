@@ -8,10 +8,8 @@ import {
   EvaluateResponse,
 } from '../../shared/types/api';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
-const WS_BASE_URL = typeof window !== 'undefined'
-  ? `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}`
-  : 'ws://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const WS_BASE_URL = process.env.NEXT_PUBLIC_WS_URL || API_BASE_URL.replace(/^http/, 'ws');
 
 export const apiClient = {
   async health(): Promise<HealthResponse> {

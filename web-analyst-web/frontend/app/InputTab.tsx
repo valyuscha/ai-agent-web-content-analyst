@@ -4,10 +4,10 @@ import { InputTabProps } from './types';
 export default function InputTab({ activeSpace, health, onIngest, onInputChange, onCreateSpace }: InputTabProps) {
   if (activeSpace.results.analysis) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">✅</div>
-          <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">Analysis Complete</h3>
+      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+        <div className="text-center py-8 sm:py-12">
+          <div className="text-5xl sm:text-6xl mb-4">✅</div>
+          <h3 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">Analysis Complete</h3>
           <p className="text-gray-600 mb-6">This space has finished its analysis. Create a new space to run another analysis.</p>
           <button
             onClick={onCreateSpace}

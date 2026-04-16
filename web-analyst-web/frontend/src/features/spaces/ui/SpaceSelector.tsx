@@ -1,26 +1,48 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useSpaces } from '../application/SpaceContext';
+import ConfirmModal from '../../../shared/ui/ConfirmModal';
 
 export default function SpaceSelector() {
   const { state, dispatch, activeSpace } = useSpaces();
   const [isOpen, setIsOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isRenaming, setIsRenaming] = useState(false);
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [newName, setNewName] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const renameInputRef = useRef<HTMLInputElement>(null);
 
+  const open = useCallback(() => {
+    setIsOpen(true);
+    requestAnimationFrame(() => {
+      setIsVisible(true);
+      setIsAnimating(true);
+    });
+  }, []);
+
+  const close = useCallback(() => {
+    setIsVisible(false);
+    setIsAnimating(true);
+  }, []);
+
+  const handleTransitionEnd = () => {
+    setIsAnimating(false);
+    if (!isVisible) setIsOpen(false);
+  };
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        close();
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [close]);
 
   useEffect(() => {
     if (isRenaming && renameInputRef.current) {
@@ -31,19 +53,17 @@ export default function SpaceSelector() {
 
   const handleCreateSpace = () => {
     dispatch({ type: 'CREATE_SPACE' });
-    setIsOpen(false);
-  };
-
-  const handleDuplicateSpace = () => {
-    if (activeSpace) {
-      dispatch({ type: 'DUPLICATE_SPACE', payload: activeSpace.id });
-      setIsOpen(false);
-    }
+    close();
   };
 
   const handleDeleteSpace = (id: string) => {
-    if (confirm('Are you sure you want to delete this space?')) {
-      dispatch({ type: 'DELETE_SPACE', payload: id });
+    setDeleteId(id);
+  };
+
+  const confirmDelete = () => {
+    if (deleteId) {
+      dispatch({ type: 'DELETE_SPACE', payload: deleteId });
+      setDeleteId(null);
     }
   };
 
@@ -71,8 +91,8 @@ export default function SpaceSelector() {
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+        onClick={() => isOpen ? close() : open()}
+        className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base whitespace-nowrap"
       >
         <span className="font-medium text-gray-700">📁 {activeSpace?.name || 'Select Space'}</span>
         <svg className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -81,17 +101,31 @@ export default function SpaceSelector() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-          <div className="p-2 border-b border-gray-200">
-            <button
-              onClick={handleCreateSpace}
-              className="w-full px-3 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-            >
-              + New Space
-            </button>
-          </div>
+        <>
+          <div
+            className={`fixed inset-0 bg-black/20 z-40 sm:hidden transition-opacity duration-200 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+            onClick={close}
+          />
+          <div
+            onTransitionEnd={handleTransitionEnd}
+            className={`fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-auto sm:top-full sm:left-0 sm:right-auto mt-0 sm:mt-2 w-full sm:w-80 bg-white border border-gray-200 rounded-t-2xl sm:rounded-lg shadow-lg z-50
+              transition-all duration-200 ease-out origin-top
+              ${isVisible
+                ? 'translate-y-0 sm:translate-y-0 opacity-100 sm:scale-100'
+                : 'translate-y-full sm:translate-y-0 opacity-100 sm:opacity-0 sm:scale-95'
+              }`}
+          >
+            <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mt-2 sm:hidden" />
+            <div className="p-2 border-b border-gray-200">
+              <button
+                onClick={handleCreateSpace}
+                className="w-full px-3 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              >
+                + New Space
+              </button>
+            </div>
 
-          <div className="max-h-96 overflow-y-auto">
+            <div className="max-h-[60vh] sm:max-h-96 overflow-y-auto">
             {state.spaces.map((space, index) => {
               const colors = [
                 'bg-blue-50 hover:bg-blue-100',
@@ -131,7 +165,7 @@ export default function SpaceSelector() {
                     <button
                       onClick={() => {
                         dispatch({ type: 'SET_ACTIVE_SPACE', payload: space.id });
-                        setIsOpen(false);
+                        close();
                       }}
                       className="flex-1 text-left"
                     >
@@ -163,7 +197,17 @@ export default function SpaceSelector() {
             })}
           </div>
         </div>
+        </>
       )}
+      <ConfirmModal
+        open={deleteId !== null}
+        title="Delete Space"
+        message="Are you sure you want to delete this space? This action cannot be undone."
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteId(null)}
+      />
     </div>
   );
 }

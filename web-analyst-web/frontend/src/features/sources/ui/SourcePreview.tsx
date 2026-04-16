@@ -20,8 +20,8 @@ export default function SourcePreview({ sources, onUpdateSource }: SourcePreview
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">Sources Preview</h2>
+    <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+      <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">Sources Preview</h2>
       
       {sources.length === 0 ? (
         <p className="text-gray-500">No sources loaded yet.</p>
@@ -29,7 +29,7 @@ export default function SourcePreview({ sources, onUpdateSource }: SourcePreview
         <div className="space-y-3">
           {sources.map((source, index) => (
             <div key={index} className="border rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
                 <span className="font-semibold">{source.title || 'Untitled'}</span>
                 <span className={`px-2 py-1 text-xs rounded ${
                   source.status === 'ok' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'

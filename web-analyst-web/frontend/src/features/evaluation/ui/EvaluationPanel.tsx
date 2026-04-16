@@ -40,8 +40,8 @@ export default function EvaluationPanel({ resultJson, onEvaluate, evaluationResu
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">Evaluation</h2>
+    <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+      <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">Evaluation</h2>
 
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2">Evaluation Method</label>
@@ -105,7 +105,7 @@ export default function EvaluationPanel({ resultJson, onEvaluate, evaluationResu
       {evaluationResult && (
         <div className="mt-6 p-4 bg-gray-50 rounded-lg">
           <h3 className="font-bold mb-3">Evaluation Results</h3>
-          <div className="grid grid-cols-3 gap-4 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
             <div className="bg-white p-3 rounded">
               <p className="text-sm text-gray-600">Precision</p>
               <p className="text-2xl font-bold">{(evaluationResult.precision * 100).toFixed(1)}%</p>
