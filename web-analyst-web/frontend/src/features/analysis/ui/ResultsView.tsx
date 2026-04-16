@@ -13,7 +13,7 @@ export default function ResultsView({ reportMarkdown, resultJson }: ResultsViewP
 
   return (
     <>      
-      <div className="max-w-none mb-8 bg-gradient-to-br from-blue-50 to-indigo-50 p-3 sm:p-4 rounded-lg border border-blue-100">
+      <div className="max-w-none mb-8 bg-gradient-to-br from-blue-50 to-indigo-50 p-3 sm:p-4 rounded-lg border border-blue-100 break-all">
         <ReactMarkdown
           components={{
             h1: ({node, ...props}) => <h1 className="text-3xl font-bold text-gray-900 mb-4 pb-2 border-b-2 border-blue-300" {...props} />,

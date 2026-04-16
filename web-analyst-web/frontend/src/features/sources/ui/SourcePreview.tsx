@@ -40,7 +40,7 @@ export default function SourcePreview({ sources, onUpdateSource }: SourcePreview
                   {source.type || 'unknown'}
                 </span>
               </div>
-              <p className="text-sm text-gray-600 mb-3">{source.url || ''}</p>
+              <p className="text-sm text-gray-600 mb-3 break-all">{source.url || ''}</p>
 
               {source.error && (
                 <div>
